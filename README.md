@@ -17,7 +17,15 @@ Generar un programa que, a partir de los archivos dados, guarde su contenido en 
 cada registro guardado, en donde la clasificación sea alta (high), envíe un email al manager del owner
 pidiendo su OK respecto de la clasificación.
 
-# Arquitectura propuesta
+# Diseño de la solución
+
+## Supuestos tomados
+
+Los siguientes supuestos fueron tenidos en cuenta para el diseño de la solución:
+
+- El archivo CSV de entrada incluye el campo `user_mail` que indica el mail de dicho empleado
+
+## Arquitectura candidata
 
 ![](draft_diagrama_solucion.png)
 

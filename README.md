@@ -20,3 +20,9 @@ pidiendo su OK respecto de la clasificación.
 # Arquitectura propuesta
 
 ![](draft_diagrama_solucion.png)
+
+## Esquema de DB
+
+El siguiente diagrama representa el esquema de la base de datos
+
+![](db_schema.png)

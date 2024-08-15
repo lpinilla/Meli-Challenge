@@ -57,6 +57,26 @@ class TestEmployee:
         assert employee.user_mail == 'test@gmail.com'
         assert employee.user_manager == 1
 
+    def test_get_manager_mail_by_managee(self, db_session, valid_employee):
+        #valid_employee = manager
+        managee = Employee(
+                user_id=2,
+                user_state=True,
+                user_mail='managee@gmail.com',
+                user_manager=1
+        )
+        #adding both users to db
+        db_session.add_all([valid_employee, managee])
+        db_session.commit()
+        #get employee, then manager and it's email
+        manager_mail =  (
+                db_session
+                .query(Employee)
+                .filter(Employee.user_id==managee.user_id)
+                .first()
+        ).managed_by.user_mail
+        assert manager_mail == 'test@gmail.com'
+
     @pytest.mark.xfail(raises=IntegrityError)
     def test_no_email(self,db_session):
         employee = Employee(

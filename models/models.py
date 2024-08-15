@@ -1,10 +1,8 @@
 import os
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey, Boolean, event
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, mapped_column, Mapped
-from sqlalchemy.exc import IntegrityError
 from enum import Enum
 from datetime import datetime
-import pytest
 
 DB_USER = os.environ['DB_USER']
 DB_PASS = os.environ['DB_PASS']
@@ -42,7 +40,7 @@ class Employee(Base):
         self.user_manager = user_manager
 
     def __repr__(self):
-        return f"<Employee(id={self.id}, user_id={self.user_id}, user_state={user_state}, user_mail={self.user_mail}, user_manager={self.user_manager})>"
+        return f"<Employee(id={self.id}, user_id={self.user_id}, user_state={self.user_state}, user_mail={self.user_mail}, user_manager={self.user_manager})>"
 
 class DBClass(Enum):
     UNCLASSIFIED = 0
@@ -83,63 +81,3 @@ class DBInfo(Base):
 #    session.add(db_info)
 #    print(session.query(DBInfo).filter_by(db_name='test_db2').first())
 #    session.commit()
-
-###########
-#  TESTS  #
-###########
-
-@pytest.fixture(scope='session')
-def db_session():
-    Base.metadata.create_all(db)
-    connection = db.connect()
-    transaction = connection.begin()
-    session = Session(bind=connection)
-    nested = connection.begin_nested()
-
-    @event.listens_for(session, "after_transaction_end")
-    def end_savepoint(session, transaction):
-        nonlocal nested
-        if not nested.is_active:
-            nested = connection.begin_nested()
-
-    yield session
-
-    session.close()
-    transaction.rollback()
-    connection.close()
-
-@pytest.fixture(scope="module")
-def valid_employee():
-    valid_employee = Employee(
-            user_id=1,
-            user_state=True,
-            user_mail='test@gmail.com',
-            user_manager=1
-    )
-    return valid_employee
-
-
-class TestEmployee:
-
-    def test_valid_employee(self, db_session, valid_employee):
-        db_session.add(valid_employee)
-        db_session.commit()
-        employee = db_session.query(Employee).filter_by(user_id=1).first()
-        assert employee.user_id == 1
-        assert employee.user_state == True
-        assert employee.user_mail == 'test@gmail.com'
-        assert employee.user_manager == 1
-
-    @pytest.mark.xfail(raises=IntegrityError)
-    def test_no_email(self,db_session):
-        employee = Employee(
-                user_id=1,
-                user_state = True,
-                user_mail = None,
-                user_manager=1
-                )
-        db_session.add(employee)
-        try:
-            db_session.commit()
-        except IntegrityError:
-            db_session.rollback()

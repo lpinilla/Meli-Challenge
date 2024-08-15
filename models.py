@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey, Boolean, event
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, mapped_column, Mapped
 from sqlalchemy.exc import IntegrityError
 from enum import Enum
@@ -88,13 +88,25 @@ class DBInfo(Base):
 #  TESTS  #
 ###########
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def db_session():
     Base.metadata.create_all(db)
-    session = Session()
+    connection = db.connect()
+    transaction = connection.begin()
+    session = Session(bind=connection)
+    nested = connection.begin_nested()
+
+    @event.listens_for(session, "after_transaction_end")
+    def end_savepoint(session, transaction):
+        nonlocal nested
+        if not nested.is_active:
+            nested = connection.begin_nested()
+
     yield session
-    session.rollback()
+
     session.close()
+    transaction.rollback()
+    connection.close()
 
 @pytest.fixture(scope="module")
 def valid_employee():

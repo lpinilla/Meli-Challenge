@@ -15,7 +15,6 @@ DB_NAME = os.environ['DB_NAME']
 db = create_engine("postgresql://%s:%s@%s:%s/%s" % (DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME))
 Session = sessionmaker(bind=db)
 
-
 @pytest.fixture(scope='module')
 def db_session():
     Base.metadata.create_all(db)
@@ -39,10 +38,10 @@ def db_session():
 @pytest.fixture(scope="module")
 def valid_employee():
     valid_employee = Employee(
-            user_id=1,
+            user_id=1000,
             user_state=True,
             user_mail='test@gmail.com',
-            user_manager=1
+            user_manager=1000
     )
     return valid_employee
 
@@ -52,19 +51,19 @@ class TestEmployee:
     def test_valid_employee(self, db_session, valid_employee):
         db_session.add(valid_employee)
         db_session.commit()
-        employee = db_session.query(Employee).filter_by(user_id=1).first()
-        assert employee.user_id == 1
+        employee = db_session.query(Employee).filter_by(user_id=1000).first()
+        assert employee.user_id == 1000
         assert employee.user_state == True
         assert employee.user_mail == 'test@gmail.com'
-        assert employee.user_manager == 1
+        assert employee.user_manager == 1000
 
     def test_get_manager_mail_by_managee(self, db_session, valid_employee):
         #valid_employee = manager
         managee = Employee(
-                user_id=2,
+                user_id=2000,
                 user_state=True,
                 user_mail='managee@gmail.com',
-                user_manager=1
+                user_manager=1000
         )
         #adding both users to db
         db_session.add_all([valid_employee, managee])
@@ -81,10 +80,10 @@ class TestEmployee:
     @pytest.mark.xfail(raises=IntegrityError)
     def test_no_email(self,db_session):
         employee = Employee(
-                user_id=1,
+                user_id=1000,
                 user_state = True,
                 user_mail = None,
-                user_manager=1
+                user_manager=1000
                 )
         db_session.add(employee)
         try:

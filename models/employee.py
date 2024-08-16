@@ -3,8 +3,6 @@ from sqlalchemy.orm import relationship, sessionmaker, mapped_column, Mapped
 from datetime import datetime
 from . import ModelBase as Base
 
-#Base = declarative_base()
-
 class Employee(Base):
     __tablename__ = 'employee'
 

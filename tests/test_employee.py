@@ -1,6 +1,7 @@
 import os
 import pytest
-from .models import Employee, Base
+from models import ModelBase as Base
+from models.employee import Employee
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine, event

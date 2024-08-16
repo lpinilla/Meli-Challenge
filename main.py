@@ -2,7 +2,9 @@ import os
 import csv
 import json
 from types import SimpleNamespace
-from models.models import Employee, Base, DBInfo, DBClass
+from models import ModelBase as Base
+from models.employee import Employee
+from models.db_info import DBInfo, DBClass
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 

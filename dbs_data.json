@@ -1,0 +1,252 @@
+[
+    {
+        "db_name": "Brown, Duncan and Munoz_db",
+        "owner_id": 36,
+        "classification": 2
+    },
+    {
+        "db_name": "May, Bennett and Estrada_db",
+        "owner_id": 37,
+        "classification": 1
+    },
+    {
+        "db_name": "Villanueva LLC_db",
+        "owner_id": 49,
+        "classification": 0
+    },
+    {
+        "db_name": "Sweeney-Raymond_db",
+        "owner_id": 29,
+        "classification": 3
+    },
+    {
+        "db_name": "Booth Group_db",
+        "owner_id": 17,
+        "classification": 2
+    },
+    {
+        "db_name": "Cunningham Ltd_db",
+        "owner_id": 2,
+        "classification": 2
+    },
+    {
+        "db_name": "Sullivan, Sanders and Chase_db",
+        "owner_id": 22,
+        "classification": 0
+    },
+    {
+        "db_name": "Castillo-Graham_db",
+        "owner_id": 18,
+        "classification": 3
+    },
+    {
+        "db_name": "Conley, Mueller and Dodson_db",
+        "owner_id": 50,
+        "classification": 3
+    },
+    {
+        "db_name": "Schneider Group_db",
+        "owner_id": 46,
+        "classification": 1
+    },
+    {
+        "db_name": "Johnson, Payne and Tyler_db",
+        "owner_id": 49,
+        "classification": 1
+    },
+    {
+        "db_name": "Price LLC_db",
+        "owner_id": 2,
+        "classification": 3
+    },
+    {
+        "db_name": "Parks Ltd_db",
+        "owner_id": 21,
+        "classification": 0
+    },
+    {
+        "db_name": "Taylor, Thomas and Odom_db",
+        "owner_id": 9,
+        "classification": 3
+    },
+    {
+        "db_name": "Green Ltd_db",
+        "owner_id": 22,
+        "classification": 2
+    },
+    {
+        "db_name": "Carlson and Sons_db",
+        "owner_id": 49,
+        "classification": 3
+    },
+    {
+        "db_name": "Morris, Taylor and Harper_db",
+        "owner_id": 31,
+        "classification": 3
+    },
+    {
+        "db_name": "Rodriguez Inc_db",
+        "owner_id": 42,
+        "classification": 3
+    },
+    {
+        "db_name": "Kim PLC_db",
+        "owner_id": 33,
+        "classification": 1
+    },
+    {
+        "db_name": "Smith Inc_db",
+        "owner_id": 45,
+        "classification": 2
+    },
+    {
+        "db_name": "Moreno, Harrison and Mitchell_db",
+        "owner_id": 7,
+        "classification": 2
+    },
+    {
+        "db_name": "Freeman, Snow and Rush_db",
+        "owner_id": 23,
+        "classification": 3
+    },
+    {
+        "db_name": "Weiss, Conway and Evans_db",
+        "owner_id": 1,
+        "classification": 3
+    },
+    {
+        "db_name": "Berg Ltd_db",
+        "owner_id": 28,
+        "classification": 2
+    },
+    {
+        "db_name": "Flores-Carr_db",
+        "owner_id": 11,
+        "classification": 2
+    },
+    {
+        "db_name": "Miller-Stevens_db",
+        "owner_id": 37,
+        "classification": 0
+    },
+    {
+        "db_name": "Schneider, Preston and Young_db",
+        "owner_id": 36,
+        "classification": 2
+    },
+    {
+        "db_name": "Herrera Group_db",
+        "owner_id": 33,
+        "classification": 3
+    },
+    {
+        "db_name": "West, Moore and Lewis_db",
+        "owner_id": 26,
+        "classification": 3
+    },
+    {
+        "db_name": "Hernandez LLC_db",
+        "owner_id": 45,
+        "classification": 0
+    },
+    {
+        "db_name": "Larson and Sons_db",
+        "owner_id": 42,
+        "classification": 0
+    },
+    {
+        "db_name": "Reed PLC_db",
+        "owner_id": 31,
+        "classification": 1
+    },
+    {
+        "db_name": "Carroll, Daniels and Arnold_db",
+        "owner_id": 18,
+        "classification": 0
+    },
+    {
+        "db_name": "Lyons, Robinson and Richardson_db",
+        "owner_id": 15,
+        "classification": 3
+    },
+    {
+        "db_name": "Griffith, Weber and Cobb_db",
+        "owner_id": 24,
+        "classification": 2
+    },
+    {
+        "db_name": "Chase, Marquez and Bishop_db",
+        "owner_id": 47,
+        "classification": 2
+    },
+    {
+        "db_name": "Brown-Clark_db",
+        "owner_id": 21,
+        "classification": 1
+    },
+    {
+        "db_name": "Hill, Simpson and Santana_db",
+        "owner_id": 20,
+        "classification": 0
+    },
+    {
+        "db_name": "Johnson, Harvey and Harmon_db",
+        "owner_id": 12,
+        "classification": 2
+    },
+    {
+        "db_name": "Bennett, Scott and Dunn_db",
+        "owner_id": 26,
+        "classification": 0
+    },
+    {
+        "db_name": "Meza, Smith and Farmer_db",
+        "owner_id": 34,
+        "classification": 2
+    },
+    {
+        "db_name": "Thompson Group_db",
+        "owner_id": 37,
+        "classification": 1
+    },
+    {
+        "db_name": "Golden-Mckenzie_db",
+        "owner_id": 39,
+        "classification": 1
+    },
+    {
+        "db_name": "Wilson-Hernandez_db",
+        "owner_id": 28,
+        "classification": 1
+    },
+    {
+        "db_name": "Green, Lewis and Humphrey_db",
+        "owner_id": 21,
+        "classification": 2
+    },
+    {
+        "db_name": "Burnett, Jones and Brennan_db",
+        "owner_id": 24,
+        "classification": 3
+    },
+    {
+        "db_name": "Wilson-Brown_db",
+        "owner_id": 25,
+        "classification": 3
+    },
+    {
+        "db_name": "Edwards PLC_db",
+        "owner_id": 39,
+        "classification": 1
+    },
+    {
+        "db_name": "Brown-Allen_db",
+        "owner_id": 39,
+        "classification": 2
+    },
+    {
+        "db_name": "Russell-Wilson_db",
+        "owner_id": 19,
+        "classification": 3
+    }
+]

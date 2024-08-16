@@ -1,9 +1,7 @@
-from models import ModelBase as Base
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey, Boolean, event
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker, mapped_column, Mapped
+from sqlalchemy import Integer, String, ForeignKey
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 from enum import Enum
-from datetime import datetime
-
+from database import Base
 
 class DBClass(Enum):
     UNCLASSIFIED = 0

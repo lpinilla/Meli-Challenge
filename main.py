@@ -5,26 +5,18 @@ from types import SimpleNamespace
 from models import ModelBase as Base
 from models.employee import Employee
 from models.db_info import DBInfo, DBClass
-from sqlalchemy import create_engine
-from sqlalchemy.orm import relationship, sessionmaker
+from fastapi import Depends, FastAPI, HTTPException
 
-DB_USER = os.environ['DB_USER']
-DB_PASS = os.environ['DB_PASS']
-DB_HOST = os.environ['DB_HOST']
-DB_PORT = os.environ['DB_PORT']
-DB_NAME = os.environ['DB_NAME']
-
-db = create_engine("postgresql://%s:%s@%s:%s/%s" % (DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME))
-Session = sessionmaker(bind=db)
-Base.metadata.create_all(db)
-
-session = Session()
-
-employees = []
-db_info = []
-
-#read csv
-with open('employee_data.csv', encoding='utf-8') as f:
+Session = sessionmaker(bind=engine)
+Base.metadata.create_all(engine)
+app = FastAPI()
+#session = Session()                                                          
+                                                                              
+employees = []                                                                
+db_info = []                                                                  
+                                                                              
+#read csv                                                                     
+with open('employee_data.csv', encoding='utf-8') as f:                        
     csvReader = csv.DictReader(f)
     for r in csvReader:
         employees.append(Employee(int(r['user_id']), bool(r['user_state']), str(r['user_mail']), int(r['user_manager'])))

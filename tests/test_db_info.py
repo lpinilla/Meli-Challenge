@@ -1,25 +1,16 @@
-import os
 import pytest
-from models import ModelBase as Base
 from models.db_info import DBInfo, DBClass
 from models.employee import Employee
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, event
+from database import Base, engine
 
-DB_USER = os.environ['DB_USER']
-DB_PASS = os.environ['DB_PASS']
-DB_HOST = os.environ['DB_HOST']
-DB_PORT = os.environ['DB_PORT']
-DB_NAME = os.environ['DB_NAME']
-
-db = create_engine("postgresql://%s:%s@%s:%s/%s" % (DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME))
-Session = sessionmaker(bind=db)
+Session = sessionmaker(bind=engine)
 
 @pytest.fixture(scope='module')
 def db_session():
-    Base.metadata.create_all(db)
-    connection = db.connect()
+    Base.metadata.create_all(engine)
+    connection = engine.connect()
     transaction = connection.begin()
     session = Session(bind=connection)
     nested = connection.begin_nested()

@@ -1,17 +1,17 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey, Boolean, event
-from sqlalchemy.orm import relationship, sessionmaker, mapped_column, Mapped
+from sqlalchemy import Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 from datetime import datetime
-from . import ModelBase as Base
+from database import Base
 
 class Employee(Base):
     __tablename__ = 'employee'
 
     id : Mapped[int] = mapped_column(primary_key=True, unique=True)
-    user_id = Column(Integer, unique=True)
-    user_state = Column(Boolean, nullable=False)
-    user_manager = Column(Integer, ForeignKey('employee.user_id'), nullable=True)
-    user_mail = Column(String(100), nullable=False)
-    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    user_id : Mapped[int] = mapped_column(Integer, unique=True)
+    user_state : Mapped[bool] = mapped_column(Boolean, nullable=False)
+    user_manager : Mapped[int] = mapped_column(Integer, ForeignKey('employee.user_id'), nullable=True)
+    user_mail : Mapped[str] = mapped_column(String(100), nullable=False)
+    created_at : Mapped[datetime] = mapped_column(DateTime(), default=datetime.now, nullable=False)
 
     #relationships
     managed_by : Mapped['Employee'] = relationship('Employee', remote_side='Employee.user_id', back_populates='manages')

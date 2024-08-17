@@ -1,3 +1,4 @@
+import hashlib
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from enum import Enum
@@ -22,7 +23,11 @@ class DBInfo(Base):
 
     def __init__(self, db_name, owner_id, classification : DBClass):
         super().__init__()
-        self.db_name = db_name
+        # if db_name is empty, create it using hash of: (id;owner_id;classification), all non-None values
+        if db_name == '':
+            self.db_name : str(hashlib.sha256(f'%d;%d;%%d' % (self.id, owner_id, classification.value)).hexdigest())
+        else:
+            self.db_name = db_name
         self.owner_id = owner_id
         self.classification = classification.value
 

@@ -44,6 +44,11 @@ def valid_multiple_employees_raw_string():
 2002,2002,True,2000,crystal23@company.com
 """
 
+@pytest.fixture(scope='module')
+def valid_db_info_raw_entry():
+    return '[{"db_name": "Brown, Duncan and Munoz_db", "owner_id": 3000, "classification": 2}]'
+
+
 
 class TestCrud:
 
@@ -79,5 +84,21 @@ class TestCrud:
         assert employee_2.user_manager == 2000
         assert employee_2.managed_by == manager
         assert employee_2 in manager.manages
+
+    def test_crud_create_multiple_db_info_from_raw(self, db_session, valid_db_info_raw_entry):
+        #create employee owner of db
+        create_employee(db_session, Employee(3000, True, 'db_owner@company.com', 3000))
+        db_owner = db_session.query(Employee).filter_by(user_id=3000).first()
+        assert db_owner.user_id == 3000
+        assert db_owner.user_state == True
+        assert db_owner.user_mail == 'db_owner@company.com'
+        assert db_owner.user_manager == 3000
+        valid_entries, invalid_entries = create_multiple_db_info_from_raw(db_session, valid_db_info_raw_entry)
+        assert len(invalid_entries) == 0
+        assert len(valid_entries) == 1
+        db_info_from_db = db_session.query(DBInfo).filter_by(db_name='Brown, Duncan and Munoz_db').first()
+        assert db_info_from_db.db_name == 'Brown, Duncan and Munoz_db'
+        assert db_info_from_db.owner_id == db_owner.user_id
+        assert DBClass(db_info_from_db.classification) == DBClass.MEDIUM
 
 

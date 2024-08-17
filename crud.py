@@ -56,6 +56,7 @@ def aux_parse_db_info(entry):
                  DBClass(entry['classification']) if entry['classification'] is not None else DBClass.UNCLASSIFIED
     )
 
+# TODO: it will fail if there is no employee data
 #to facilitate testing
 def create_db_info_from_raw(db:Session, raw_json):
     parsed_json = json.loads(raw_json)

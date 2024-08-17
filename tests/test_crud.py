@@ -1,5 +1,6 @@
 import pytest
 import csv
+import hashlib
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, event
@@ -115,4 +116,29 @@ class TestCrud:
         assert parsed.db_name == valid_db_info_object['db_name']
         assert parsed.owner_id == valid_db_info_object['owner_id']
         assert DBClass(parsed.classification) == valid_db_info_object['classification']
+
+    def test_crud_aux_parse_db_info_no_db_name(self, db_session, valid_db_info_object):
+        no_name_db_info = { 'db_name': '', 'owner_id': 3000, 'classification': DBClass.LOW}
+        parsed = aux_parse_db_info(no_name_db_info)
+        assert parsed is not None
+        assert parsed.owner_id == valid_db_info_object['owner_id']
+        assert DBClass(parsed.classification) == valid_db_info_object['classification']
+        assert parsed.db_name is not None
+        assert parsed.db_name != ''
+
+    def test_crud_aux_parse_db_info_no_owner_id(self, db_session, valid_db_info_object):
+        no_name_db_info = { 'db_name': 'testdb', 'owner_id': None, 'classification': DBClass.LOW}
+        parsed = aux_parse_db_info(no_name_db_info)
+        assert parsed is not None
+        assert parsed.db_name == 'testdb'
+        assert parsed.owner_id == 0
+        assert DBClass(parsed.classification) == valid_db_info_object['classification']
+
+    def test_crud_aux_parse_db_info_no_classification(self, db_session, valid_db_info_object):
+        no_name_db_info = { 'db_name': 'testdb', 'owner_id': 3000, 'classification': None}
+        parsed = aux_parse_db_info(no_name_db_info)
+        assert parsed is not None
+        assert parsed.db_name == 'testdb'
+        assert parsed.owner_id == 3000
+        assert DBClass(parsed.classification) == DBClass.UNCLASSIFIED
 

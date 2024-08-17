@@ -2,6 +2,7 @@ import hashlib
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from enum import Enum
+from datetime import datetime
 from database import Base
 
 class DBClass(Enum):
@@ -13,7 +14,7 @@ class DBClass(Enum):
 class DBInfo(Base):
     __tablename__ = 'db_info'
 
-    id : Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
+    id : Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     db_name : Mapped[str] = mapped_column(String, nullable=False)
     owner_id : Mapped[int] = mapped_column(Integer, ForeignKey('employee.user_id'), nullable=False)
     classification : Mapped[DBClass] = mapped_column(Integer, nullable=False)
@@ -23,14 +24,15 @@ class DBInfo(Base):
 
     def __init__(self, db_name, owner_id, classification : DBClass):
         super().__init__()
-        # if db_name is empty, create it using hash of: (id;owner_id;classification), all non-None values
+        # if db_name is empty, create it using hash of: (timestamp;owner_id;classification), all non-None values
         if db_name == '':
-            self.db_name : str(hashlib.sha256(f'%d;%d;%%d' % (self.id, owner_id, classification.value)).hexdigest())
+            db_hash = f"{0};{1};{2}".format(int(datetime.timestamp(datetime.now())), owner_id, classification.value)
+            self.db_name = str(hashlib.sha256(db_hash.encode('utf-8')).hexdigest())
         else:
             self.db_name = db_name
         self.owner_id = owner_id
         self.classification = classification.value
 
     def __repr__(self):
-        return f"<DBInfo(row_id={self.id}, user_id={self.db_name}, owner_id={self.owner_id}, classification={DBClass(self.classification).name})>"
+        return f"<DBInfo(id={self.id}, db_name={self.db_name}, owner_id={self.owner_id}, classification={DBClass(self.classification).name})>"
 

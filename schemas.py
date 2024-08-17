@@ -18,7 +18,7 @@ class Employee(EmployeeBase):
     user_mail: str
     created_at: int
 
-    class Config:
+    class ConfigDict:
         orm_mode: True
 
 class DBInfoBase(BaseModel):
@@ -35,5 +35,5 @@ class DBInfo(DBInfoBase):
     owner_id: int
     classification: DBClass
 
-    class Config:
+    class ConfigDict:
         orm_mode: True

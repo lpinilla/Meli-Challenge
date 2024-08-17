@@ -15,16 +15,21 @@ def get_db():
         db.close()
 
 #Endpoint to upload csv of employees
-#assumes this file is correct
+#assumes this file's data is correct
 @app.post('/csv')
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    content = await file.read(encoding='utf-8')
-    crud.create_multiple_employees_from_raw(content)
+    content = await file.read()
+    result = create_multiple_employees_from_raw(db, content.decode('utf-8'))
+    if not result['success']:
+        raise HTTPException(status_code=409, detail=result['error'])
+    return result
 
 #Endpoint to upload json with db data, data *can* be corrupted
 @app.post('/json')
 async def upload_json(file: UploadFile = File(...), db: Session = Depends(get_db)):
     content = await file.read()
-    create_multiple_db_info_from_raw(content)
-    return {'invalid_entries': invalid_entries}
+    result = create_multiple_db_info_from_raw(db, content)
+    if not result['success']:
+        raise HTTPException(status_code=409, detail=result['error'])
+    return {'number_of_records_added': result['total'], 'invalid_entries': result['invalid_entries']}
 

@@ -102,7 +102,14 @@ class TestCrud:
         #create employee owner of db
         create_employee(db_session, Employee(3000, True, 'db_owner@company.com', 3000))
         db_owner = db_session.query(Employee).filter_by(user_id=3000).first()
-        valid_entries, invalid_entries = create_multiple_db_info_from_raw(db_session, valid_db_info_raw_entry)
+        result = create_multiple_db_info_from_raw(db_session, valid_db_info_raw_entry)
+        success = result['success']
+        total = result['total']
+        assert 'error' not in result
+        valid_entries = result['valid_entries']
+        invalid_entries = result['invalid_entries']
+        assert success == True
+        assert total == 1
         assert len(invalid_entries) == 0
         assert len(valid_entries) == 1
         db_info_from_db = db_session.query(DBInfo).filter_by(db_name='Brown, Duncan and Munoz_db').first()
@@ -141,4 +148,34 @@ class TestCrud:
         assert parsed.db_name == 'testdb'
         assert parsed.owner_id == 3000
         assert DBClass(parsed.classification) == DBClass.UNCLASSIFIED
+
+    def test_validate_db_fields_extra_fields(self):
+        extra_fields_obj = {'db_name' : 'test', 'owner_id': 'test', 'classification': 'test', 'extra': 'test'}
+        assert validate_db_fields(extra_fields_obj) == True
+
+    def test_validate_db_fields_missing_fields(self):
+        missing_fields_obj = {'owner_id': 'test', 'classification': 'test', 'extra': 'test'}
+        assert validate_db_fields(missing_fields_obj) == False
+
+    def test_validate_db_fields_all_fields_but_one_empty(self):
+        all_fields_but_empty = {'db_name' : '', 'owner_id': 'test', 'classification': 'test'}
+        assert validate_db_fields(all_fields_but_empty) == True
+
+    def test_validate_db_fields_all_fields_but_one_none(self):
+        all_fields_but_None = {'db_name' : None, 'owner_id': 'test', 'classification': 'test'}
+        assert validate_db_fields(all_fields_but_None) == True
+
+    def test_validate_db_fields_all_field_but_all_empty(self):
+        all_fields_empty = {'db_name' : '', 'owner_id': '', 'classification': ''}
+        assert validate_db_fields(all_fields_empty) == False
+
+    def test_validate_db_fields_all_field_but_all_none(self):
+        all_fields_none = {'db_name' : None, 'owner_id': None, 'classification': None}
+        assert validate_db_fields(all_fields_none) == False
+
+    def test_validate_db_fields_all_field_but_empty_and_none_mix(self):
+        fields_none_empty_mix = {'db_name' : '', 'owner_id': None, 'classification': None}
+        assert validate_db_fields(fields_none_empty_mix) == False
+
+
 

@@ -48,6 +48,10 @@ def valid_multiple_employees_raw_string():
 def valid_db_info_raw_entry():
     return '[{"db_name": "Brown, Duncan and Munoz_db", "owner_id": 3000, "classification": 2}]'
 
+@pytest.fixture(scope='module')
+def valid_db_info_object():
+    return { 'db_name': 'testDB', 'owner_id': 3000, 'classification': DBClass.LOW}
+
 
 
 class TestCrud:
@@ -60,6 +64,14 @@ class TestCrud:
         assert employee.user_state == True
         assert employee.user_mail == 'crystal21@company.com'
         assert employee.user_manager == 1000
+
+    def test_crud_create_employee(self, db_session):
+        create_employee(db_session, Employee(1001, True, 'db_owner@company.com', 1001))
+        db_owner = db_session.query(Employee).filter_by(user_id=1001).first()
+        assert db_owner.user_id == 1001
+        assert db_owner.user_state == True
+        assert db_owner.user_mail == 'db_owner@company.com'
+        assert db_owner.user_manager == 1001
 
 
     def test_crud_create_multiple_employees_from_raw(self, db_session, valid_multiple_employees_raw_string):
@@ -89,10 +101,6 @@ class TestCrud:
         #create employee owner of db
         create_employee(db_session, Employee(3000, True, 'db_owner@company.com', 3000))
         db_owner = db_session.query(Employee).filter_by(user_id=3000).first()
-        assert db_owner.user_id == 3000
-        assert db_owner.user_state == True
-        assert db_owner.user_mail == 'db_owner@company.com'
-        assert db_owner.user_manager == 3000
         valid_entries, invalid_entries = create_multiple_db_info_from_raw(db_session, valid_db_info_raw_entry)
         assert len(invalid_entries) == 0
         assert len(valid_entries) == 1
@@ -101,4 +109,10 @@ class TestCrud:
         assert db_info_from_db.owner_id == db_owner.user_id
         assert DBClass(db_info_from_db.classification) == DBClass.MEDIUM
 
+    def test_crud_aux_parse_db_info(self, db_session, valid_db_info_object):
+        parsed = aux_parse_db_info(valid_db_info_object)
+        assert parsed is not None
+        assert parsed.db_name == valid_db_info_object['db_name']
+        assert parsed.owner_id == valid_db_info_object['owner_id']
+        assert DBClass(parsed.classification) == valid_db_info_object['classification']
 

@@ -49,11 +49,11 @@ def validate_db_fields(db_info):
     return all(k in db_info.keys() for k in required_fields)
 
 #to simply testing and creation
-def aux_parse_db_info(json_entry):
+def aux_parse_db_info(entry):
     return DBInfo(
-                 str(json_entry['db_name']) if json_entry['db_name'] is not None else '',
-                 int(json_entry['owner_id']) if json_entry['owner_id'] is not None else 0,
-                 DBClass(json_entry['classification']) if json_entry['classification'] is not None else DBClass.UNCLASSIFIED
+                 str(entry['db_name']) if entry['db_name'] is not None else '',
+                 int(entry['owner_id']) if entry['owner_id'] is not None else 0,
+                 DBClass(entry['classification']) if entry['classification'] is not None else DBClass.UNCLASSIFIED
     )
 
 #to facilitate testing
@@ -64,7 +64,6 @@ def create_db_info_from_raw(db:Session, raw_json):
     db.add(valid_db_info)
     db.commit()
     return valid_db_info
-
 
 
 # TODO: it will fail if there is no employee data

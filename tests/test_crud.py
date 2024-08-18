@@ -58,9 +58,9 @@ def valid_db_info_object():
 class TestCrud:
 
     def test_crud_create_employee_from_raw(self, db_session, valid_employee_raw_string):
-        crud_created_user = create_employee_from_raw(db_session, valid_employee_raw_string)
+        result = create_multiple_employees_from_raw(db_session, valid_employee_raw_string)
+        assert result['success'] == True
         employee = db_session.query(Employee).filter_by(user_id=1000).first()
-        assert crud_created_user == employee
         assert employee.user_id == 1000
         assert employee.user_state == True
         assert employee.user_mail == 'crystal21@company.com'

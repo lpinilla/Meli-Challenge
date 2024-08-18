@@ -4,9 +4,12 @@ from fastapi import Depends, FastAPI, HTTPException, File, UploadFile
 from database import Base, Session, engine
 from crud import *
 import schemas
+import logging
 
 Base.metadata.create_all(engine)
 app = FastAPI()
+logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def get_db():
     db = Session()
@@ -19,6 +22,7 @@ def get_db():
 #assumes this file's data is correct
 @app.post('/employees/upload')
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    logger.debug('endpoint /employees/upload called, creating employees from csv')
     content = await file.read()
     result = create_multiple_employees_from_raw(db, content.decode('utf-8'))
     if not result['success']:
@@ -28,6 +32,7 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
 #Endpoint to upload json with db data, data *can* be corrupted
 @app.post('/db_info/upload')
 async def upload_json(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    logger.debug('endpoint /db_info/upload called, creating db_info from json')
     content = await file.read()
     result = create_multiple_db_info_from_raw(db, content)
     if not result['success']:
@@ -37,4 +42,5 @@ async def upload_json(file: UploadFile = File(...), db: Session = Depends(get_db
 #Endpoint to get all unclassified dbs
 @app.get('/db_info/unclassified')
 def get_unclass_dbs(db: Session = Depends(get_db)):
+    logger.debug('endpoint /db_info/unclassified called')
     return get_unclassified_dbs(db)

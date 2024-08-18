@@ -9,13 +9,12 @@ import schemas
 
 #for testing only
 def create_employee(db:Session, employee: schemas.EmployeeCreate):
-    new_employee = Employee(employee.user_id, employee.user_state, employee.user_mail, employee.user_manager)
-    db.add(new_employee)
+    db.add(employee)
     try:
         db.commit()
     except IntegrityError as e:
-        return None
-    return new_employee
+        return False
+    return True
 
 #for testing only
 #no schema as it is raw
@@ -54,6 +53,18 @@ def create_multiple_employees_from_raw(db: Session, raw_csv):
         db.rollback()
         return  {'success': False, 'error': repr(e).split('DETAIL')[1]}
     return {'success': True}
+
+#to facilitate testing
+# def create_employee(db:Session, employee: schemas.EmployeeCreate):
+def create_DBInfo(db:Session, db_info: schemas.DBInfoCreate):
+    db.add(db_info)
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        return False
+    return True
+
 
 # A field is valid iif:
 # - Has all 3 required fields
@@ -103,3 +114,5 @@ def create_multiple_db_info_from_raw(db: Session, raw_json):
         return {'success': False, 'total': 0, 'error': repr(e).split('DETAIL')[1]}
     return {'success': True, 'total': len(valid_entries), 'valid_entries': valid_entries, 'invalid_entries': invalid_entries}
 
+def get_unclassified_dbs(db: Session, response_model=list[schemas.DBInfo]):
+    return db.query(DBInfo).filter_by(classification=DBClass.UNCLASSIFIED.value).all()

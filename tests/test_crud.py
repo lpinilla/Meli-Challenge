@@ -11,7 +11,7 @@ from io import StringIO
 
 Session = sessionmaker(bind=engine)
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='class')
 def db_session():
     Base.metadata.create_all(engine)
     connection = engine.connect()
@@ -177,5 +177,39 @@ class TestCrud:
         fields_none_empty_mix = {'db_name' : '', 'owner_id': None, 'classification': None}
         assert validate_db_fields(fields_none_empty_mix) == False
 
+    def test_get_unclassified_db_info(self, db_session):
+        unclassified_db = DBInfo('unclass_test', 3000, DBClass.UNCLASSIFIED)
+        classified_db = DBInfo('class_test', 3000, DBClass.LOW)
+        unclass_result = create_DBInfo(db_session, unclassified_db)
+        assert unclass_result == True
+        class_result = create_DBInfo(db_session, classified_db)
+        assert class_result == True
+        query_result = get_unclassified_dbs(db_session)
+        assert len(query_result) == 1
+        assert query_result[0] == unclassified_db
+        assert DBClass(query_result[0].classification) == DBClass.UNCLASSIFIED
+        assert query_result[0].db_name == unclassified_db.db_name
+        assert query_result[0].owner_id == unclassified_db.owner_id
 
 
+# Different class to get different session scope
+class TestCrudQueries:
+
+    def test_get_multiple_unclassified_db_info(self, db_session):
+        create_employee(db_session, Employee(3000, True, 'db_owner@company.com', 3000))
+        unclassified_db = DBInfo('unclass_test', 3000, DBClass.UNCLASSIFIED)
+        unclassified_db_2 = DBInfo('unclass_test_2', 3000, DBClass.UNCLASSIFIED)
+        classified_db = DBInfo('class_test', 3000, DBClass.LOW)
+        unclass_result = create_DBInfo(db_session, unclassified_db)
+        assert unclass_result == True
+        unclass_2_result = create_DBInfo(db_session, unclassified_db_2)
+        assert unclass_2_result == True
+        class_result = create_DBInfo(db_session, classified_db)
+        assert class_result == True
+        query_result = get_unclassified_dbs(db_session)
+        assert len(query_result) == 2
+        assert unclassified_db in query_result
+        assert unclassified_db_2 in query_result
+        assert classified_db not in query_result
+        for qr in query_result:
+            assert DBClass(qr.classification) == DBClass.UNCLASSIFIED

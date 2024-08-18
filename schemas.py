@@ -1,5 +1,5 @@
 from models.db_info import DBClass
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class EmployeeBase(BaseModel):
     user_id: int
@@ -19,12 +19,12 @@ class Employee(EmployeeBase):
     created_at: int
 
     class ConfigDict:
-        orm_mode: True
+        from_attributes=True
 
 class DBInfoBase(BaseModel):
     db_name: str
     owner_id: int
-    classification: DBClass
+    classification: int
 
 class DBInfoCreate(DBInfoBase):
     pass
@@ -33,7 +33,7 @@ class DBInfo(DBInfoBase):
     id: int
     db_name: str
     owner_id: int
-    classification: DBClass
+    classification: int
 
     class ConfigDict:
-        orm_mode: True
+        from_attributes=True

@@ -30,8 +30,8 @@ class DBInfo(Base):
             self.db_name = str(hashlib.sha256(db_hash.encode('utf-8')).hexdigest())
         else:
             self.db_name = db_name
-        self.owner_id = owner_id
-        self.classification = classification.value
+        self.owner_id = owner_id if owner_id is not None else 0
+        self.classification = classification.value if classification is not None else DBClass.UNCLASSIFIED.value
 
     def __repr__(self):
         return f"<DBInfo(id={self.id}, db_name={self.db_name}, owner_id={self.owner_id}, classification={DBClass(self.classification).name})>"

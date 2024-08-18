@@ -68,10 +68,17 @@ def create_DBInfo(db:Session, db_info: schemas.DBInfoCreate):
 
 # A field is valid iif:
 # - Has all 3 required fields
-# - db_name and owner_id are not empty or None at the same time
+# - Fields are not None
+# - owner_id is not empty nor negative int
+# - classification is withing valid range (currently: [0;3])
 def validate_db_fields(db_info):
-    required_fields = ['db_name', 'owner_id', 'classification']
-    return all(k in db_info.keys() for k in required_fields) and any([db_info['db_name'], db_info['owner_id']])
+    required_fields = {'db_name': str, 'owner_id': int, 'classification': int}
+    #Check all the fields are in the info with their respective type and that they are not None
+    for key, expected_type in required_fields.items():
+        if key not in db_info or db_info[key] is None or not isinstance(db_info[key], expected_type): return False
+    if db_info['owner_id'] <= 0: return False
+    if db_info['classification'] not in DBClass._value2member_map_: return False
+    return db_info['owner_id'] != ''
 
 #to simplify testing and creation
 def aux_parse_db_info(entry):

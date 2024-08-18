@@ -150,7 +150,7 @@ class TestCrud:
         assert DBClass(parsed.classification) == DBClass.UNCLASSIFIED
 
     def test_validate_db_fields_extra_fields(self):
-        extra_fields_obj = {'db_name' : 'test', 'owner_id': 'test', 'classification': 'test', 'extra': 'test'}
+        extra_fields_obj = {'db_name' : 'test', 'owner_id': 3000, 'classification': 3, 'extra': 'test'}
         assert validate_db_fields(extra_fields_obj) == True
 
     def test_validate_db_fields_missing_fields(self):
@@ -158,12 +158,12 @@ class TestCrud:
         assert validate_db_fields(missing_fields_obj) == False
 
     def test_validate_db_fields_all_fields_but_one_empty(self):
-        all_fields_but_empty = {'db_name' : '', 'owner_id': 'test', 'classification': 'test'}
+        all_fields_but_empty = {'db_name' : '', 'owner_id': 3000, 'classification': 1}
         assert validate_db_fields(all_fields_but_empty) == True
 
     def test_validate_db_fields_all_fields_but_one_none(self):
-        all_fields_but_None = {'db_name' : None, 'owner_id': 'test', 'classification': 'test'}
-        assert validate_db_fields(all_fields_but_None) == True
+        all_fields_but_None = {'db_name' : None, 'owner_id': 3000, 'classification': 1}
+        assert validate_db_fields(all_fields_but_None) == False
 
     def test_validate_db_fields_all_field_but_all_empty(self):
         all_fields_empty = {'db_name' : '', 'owner_id': '', 'classification': ''}
@@ -176,6 +176,30 @@ class TestCrud:
     def test_validate_db_fields_all_field_but_empty_and_none_mix(self):
         fields_none_empty_mix = {'db_name' : '', 'owner_id': None, 'classification': None}
         assert validate_db_fields(fields_none_empty_mix) == False
+
+    def test_validate_db_fields_classification_outside_range(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': 4}
+        assert validate_db_fields(invalid_fields) == False
+
+    def test_validate_db_fields_negative_owner_id(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': -1, 'classification': 3}
+        assert validate_db_fields(invalid_fields) == False
+
+    def test_validate_db_fields_string_owner_id(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': 'invalid', 'classification': 3}
+        assert validate_db_fields(invalid_fields) == False
+
+    def test_validate_db_fields_empty_string_owner_id(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': '', 'classification': 3}
+        assert validate_db_fields(invalid_fields) == False
+
+    def test_validate_db_fields_empty_string_classification(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': ''}
+        assert validate_db_fields(invalid_fields) == False
+
+    def test_validate_db_fields_string_classification(self):
+        invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': 'invalid'}
+        assert validate_db_fields(invalid_fields) == False
 
     def test_get_unclassified_db_info(self, db_session):
         unclassified_db = DBInfo('unclass_test', 3000, DBClass.UNCLASSIFIED)

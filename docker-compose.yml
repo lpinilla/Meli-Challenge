@@ -11,8 +11,11 @@ services:
       - DB_HOST=postgres
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
+      - MAIL_SERVER=mailhog
+      - MAIL_PORT= 1025
     depends_on:
       - postgres
+      - mailhog
 
   postgres:
     image: postgres:16.4
@@ -23,6 +26,11 @@ services:
     volumes:
       - meli_db:/var/lib/postgresql/data
 
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   meli_db: {}

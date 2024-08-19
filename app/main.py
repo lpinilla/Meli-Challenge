@@ -44,3 +44,9 @@ async def upload_json(file: UploadFile = File(...), db: Session = Depends(get_db
 def get_unclass_dbs(db: Session = Depends(get_db)):
     logger.debug('endpoint /db_info/unclassified called')
     return get_unclassified_dbs(db)
+
+#Endpoint to notify high-classified-db owner's managers that they should review the db
+@app.post('/notify')
+def notify(db: Session = Depends(get_db)):
+    logger.debug('endpoint /notify called')
+    notify_db_owners_manager(db)

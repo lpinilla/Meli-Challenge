@@ -7,6 +7,7 @@ from models.db_info import DBInfo, DBClass
 from models.employee import Employee
 import schemas
 import logging
+from notifier import send_email_notification
 
 logger = logging.getLogger(__name__)
 
@@ -112,3 +113,8 @@ def create_multiple_db_info_from_raw(db: Session, raw_json):
 
 def get_unclassified_dbs(db: Session, response_model=list[schemas.DBInfo]):
     return db.query(DBInfo).filter_by(classification=DBClass.UNCLASSIFIED.value).all()
+
+def notify_db_owners_manager(db: Session):
+    high_classification_dbs = db.query(DBInfo).filter_by(classification=DBClass.HIGH.value).all()
+    for db_info in high_classification_dbs:
+        send_email_notification(db_info, db_info.is_owned.user_mail, db_info.is_owned.managed_by.user_mail)

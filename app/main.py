@@ -8,6 +8,7 @@ app = FastAPI()
 logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+#Method to yield db session
 def get_db():
     db = Session()
     try:

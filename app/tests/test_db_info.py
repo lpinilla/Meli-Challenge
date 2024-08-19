@@ -2,7 +2,7 @@ import pytest
 from models.db_info import DBInfo, DBClass
 from models.employee import Employee
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, event
+from sqlalchemy import event
 from database import Base, engine
 
 Session = sessionmaker(bind=engine)

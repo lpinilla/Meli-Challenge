@@ -1,13 +1,10 @@
 import pytest
-import csv
-import hashlib
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, event
+from sqlalchemy import event
 from models.employee import Employee
+from models.db_info import DBClass, DBInfo
 from database import Base, engine
-from crud import *
-from io import StringIO
+from crud import create_multiple_employees_from_raw, create_multiple_db_info_from_raw, aux_parse_db_info, validate_db_fields, create_DBInfo, get_unclassified_dbs, create_employee
 
 Session = sessionmaker(bind=engine)
 
@@ -34,15 +31,15 @@ def db_session():
 @pytest.fixture(scope='module')
 def valid_employee_raw_string():
     return """row_id,user_id,user_state,user_manager,user_mail
-1000,1000,True,1000,crystal21@company.com
+1000,1000,True,1000,test21@company.com
 """
 
 @pytest.fixture(scope='module')
 def valid_multiple_employees_raw_string():
     return """row_id,user_id,user_state,user_manager,user_mail
-2000,2000,True,2000,crystal21@company.com
-2001,2001,False,2000,crystal22@company.com
-2002,2002,True,2000,crystal23@company.com
+2000,2000,True,2000,test21@company.com
+2001,2001,False,2000,test22@company.com
+2002,2002,True,2000,test23@company.com
 """
 
 @pytest.fixture(scope='module')
@@ -59,18 +56,18 @@ class TestCrud:
 
     def test_crud_create_employee_from_raw(self, db_session, valid_employee_raw_string):
         result = create_multiple_employees_from_raw(db_session, valid_employee_raw_string)
-        assert result['success'] == True
+        assert result['success']
         employee = db_session.query(Employee).filter_by(user_id=1000).first()
         assert employee.user_id == 1000
-        assert employee.user_state == True
-        assert employee.user_mail == 'crystal21@company.com'
+        assert employee.user_state
+        assert employee.user_mail == 'test21@company.com'
         assert employee.user_manager == 1000
 
     def test_crud_create_employee(self, db_session):
         create_employee(db_session, Employee(1001, True, 'db_owner@company.com', 1001))
         db_owner = db_session.query(Employee).filter_by(user_id=1001).first()
         assert db_owner.user_id == 1001
-        assert db_owner.user_state == True
+        assert db_owner.user_state
         assert db_owner.user_mail == 'db_owner@company.com'
         assert db_owner.user_manager == 1001
 
@@ -80,20 +77,20 @@ class TestCrud:
         #get manager
         manager = db_session.query(Employee).filter_by(user_id=2000).first()
         assert manager.user_id == 2000
-        assert manager.user_state == True
-        assert manager.user_mail == 'crystal21@company.com'
+        assert manager.user_state
+        assert manager.user_mail == 'test21@company.com'
         assert manager.user_manager == 2000
         employee_1 = db_session.query(Employee).filter_by(user_id=2001).first()
         assert employee_1.user_id == 2001
-        assert employee_1.user_state == False
-        assert employee_1.user_mail == 'crystal22@company.com'
+        assert not employee_1.user_state
+        assert employee_1.user_mail == 'test22@company.com'
         assert employee_1.user_manager == 2000
         assert employee_1.managed_by == manager
         assert employee_1 in manager.manages
         employee_2 = db_session.query(Employee).filter_by(user_id=2002).first()
         assert employee_2.user_id == 2002
-        assert employee_2.user_state == True
-        assert employee_2.user_mail == 'crystal23@company.com'
+        assert employee_2.user_state
+        assert employee_2.user_mail == 'test23@company.com'
         assert employee_2.user_manager == 2000
         assert employee_2.managed_by == manager
         assert employee_2 in manager.manages
@@ -108,7 +105,7 @@ class TestCrud:
         assert 'error' not in result
         valid_entries = result['valid_entries']
         invalid_entries = result['invalid_entries']
-        assert success == True
+        assert success
         assert total == 1
         assert len(invalid_entries) == 0
         assert len(valid_entries) == 1
@@ -151,63 +148,63 @@ class TestCrud:
 
     def test_validate_db_fields_extra_fields(self):
         extra_fields_obj = {'db_name' : 'test', 'owner_id': 3000, 'classification': 3, 'extra': 'test'}
-        assert validate_db_fields(extra_fields_obj) == True
+        assert validate_db_fields(extra_fields_obj)
 
     def test_validate_db_fields_missing_fields(self):
         missing_fields_obj = {'owner_id': 'test', 'classification': 'test', 'extra': 'test'}
-        assert validate_db_fields(missing_fields_obj) == False
+        assert not validate_db_fields(missing_fields_obj)
 
     def test_validate_db_fields_all_fields_but_one_empty(self):
         all_fields_but_empty = {'db_name' : '', 'owner_id': 3000, 'classification': 1}
-        assert validate_db_fields(all_fields_but_empty) == True
+        assert validate_db_fields(all_fields_but_empty)
 
     def test_validate_db_fields_all_fields_but_one_none(self):
         all_fields_but_None = {'db_name' : None, 'owner_id': 3000, 'classification': 1}
-        assert validate_db_fields(all_fields_but_None) == False
+        assert not validate_db_fields(all_fields_but_None)
 
     def test_validate_db_fields_all_field_but_all_empty(self):
         all_fields_empty = {'db_name' : '', 'owner_id': '', 'classification': ''}
-        assert validate_db_fields(all_fields_empty) == False
+        assert not validate_db_fields(all_fields_empty)
 
     def test_validate_db_fields_all_field_but_all_none(self):
         all_fields_none = {'db_name' : None, 'owner_id': None, 'classification': None}
-        assert validate_db_fields(all_fields_none) == False
+        assert not validate_db_fields(all_fields_none)
 
     def test_validate_db_fields_all_field_but_empty_and_none_mix(self):
         fields_none_empty_mix = {'db_name' : '', 'owner_id': None, 'classification': None}
-        assert validate_db_fields(fields_none_empty_mix) == False
+        assert not validate_db_fields(fields_none_empty_mix)
 
     def test_validate_db_fields_classification_outside_range(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': 4}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_validate_db_fields_negative_owner_id(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': -1, 'classification': 3}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_validate_db_fields_string_owner_id(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': 'invalid', 'classification': 3}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_validate_db_fields_empty_string_owner_id(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': '', 'classification': 3}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_validate_db_fields_empty_string_classification(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': ''}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_validate_db_fields_string_classification(self):
         invalid_fields = {'db_name' : 'test', 'owner_id': 3000, 'classification': 'invalid'}
-        assert validate_db_fields(invalid_fields) == False
+        assert not validate_db_fields(invalid_fields)
 
     def test_get_unclassified_db_info(self, db_session):
         unclassified_db = DBInfo('unclass_test', 3000, DBClass.UNCLASSIFIED)
         classified_db = DBInfo('class_test', 3000, DBClass.LOW)
         unclass_result = create_DBInfo(db_session, unclassified_db)
-        assert unclass_result == True
+        assert unclass_result
         class_result = create_DBInfo(db_session, classified_db)
-        assert class_result == True
+        assert class_result
         query_result = get_unclassified_dbs(db_session)
         assert len(query_result) == 1
         assert query_result[0] == unclassified_db
@@ -225,11 +222,11 @@ class TestCrudQueries:
         unclassified_db_2 = DBInfo('unclass_test_2', 3000, DBClass.UNCLASSIFIED)
         classified_db = DBInfo('class_test', 3000, DBClass.LOW)
         unclass_result = create_DBInfo(db_session, unclassified_db)
-        assert unclass_result == True
+        assert unclass_result
         unclass_2_result = create_DBInfo(db_session, unclassified_db_2)
-        assert unclass_2_result == True
+        assert unclass_2_result
         class_result = create_DBInfo(db_session, classified_db)
-        assert class_result == True
+        assert class_result
         query_result = get_unclassified_dbs(db_session)
         assert len(query_result) == 2
         assert unclassified_db in query_result

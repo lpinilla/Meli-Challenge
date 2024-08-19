@@ -1,5 +1,4 @@
-from models.db_info import DBClass
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 class EmployeeBase(BaseModel):
     user_id: int

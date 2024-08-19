@@ -2,7 +2,7 @@ import pytest
 from models.employee import Employee
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, event
+from sqlalchemy import event
 from database import Base, engine
 
 Session = sessionmaker(bind=engine)
@@ -45,7 +45,7 @@ class TestEmployee:
         db_session.commit()
         employee = db_session.query(Employee).filter_by(user_id=1000).first()
         assert employee.user_id == 1000
-        assert employee.user_state == True
+        assert employee.user_state
         assert employee.user_mail == 'test@gmail.com'
         assert employee.user_manager == 1000
 

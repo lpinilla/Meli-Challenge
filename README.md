@@ -82,3 +82,5 @@ Por último, para ejecutar las notificaciones, puede correr `curl -X POST localh
 El archivo `curl_test_commands.sh` incluye todos los comandos anteriores para realizar el testeo de forma más automatizada.
 
 Puede ver los mails "enviados" accediendo al portal web de mailhog: `http://localhost:8025`
+
+La documentación de los endpoints se puede ver en `localhost:8080/docs`.

@@ -117,5 +117,8 @@ def get_unclassified_dbs(db: Session, response_model=list[schemas.DBInfo]):
 def notify_db_owners_manager(db: Session):
     high_classification_dbs = db.query(DBInfo).filter_by(classification=DBClass.HIGH.value).all()
     logger.debug('found len(high_classification_dbs) dbs to notify, starting sending mails')
+    emails_with_errors = []
     for db_info in high_classification_dbs:
-        send_email_notification(db_info.db_name, db_info.is_owned.user_mail, db_info.is_owned.managed_by.user_mail)
+        if not send_email_notification(db_info.db_name, db_info.is_owned.user_mail, db_info.is_owned.managed_by.user_mail):
+            emails_with_errors.append(db_info.is_owned.managed_by.user_mail)
+    return emails_with_errors

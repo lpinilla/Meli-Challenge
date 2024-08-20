@@ -47,4 +47,8 @@ def get_unclass_dbs(db: Session = Depends(get_db)):
 @app.post('/notify')
 def notify(db: Session = Depends(get_db)):
     logger.debug('endpoint /notify called')
-    notify_db_owners_manager(db)
+    emails_with_errors = notify_db_owners_manager(db)
+    if len(emails_with_errors) == 0:
+        return {'success': True}
+    else:
+        return {'success': False, 'recipients_with_errors': emails_with_errors}

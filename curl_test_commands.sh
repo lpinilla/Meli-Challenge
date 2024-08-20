@@ -6,3 +6,6 @@ curl -X POST localhost:8080/db_info/upload -H "accept: application/json" -H "Con
 
 #get unclassified
 curl localhost:8080/db_info/unclassified
+
+#notify
+curl -X POST localhost:8080/notify

@@ -61,7 +61,8 @@ Simplemente utilizando `git clone https://github.com/lpinilla/Meli-Challenge.git
 Accediendo a la carpeta raíz del repositorio, puede ejecutar `docker compose up` para levantar los servicios. Este comando descargará las imágenes de
 `postgres` y `mailhog` mientras que creará y levantará la imágen principal de la API.
 
-En caso de querer modificar las variables de entorno a utilizar, utilice el template `.env.example` para crear un archivo `.env` con sus variables.
+Es importante crear el archivo `.env` con las variables de entorno antes de correr la aplicación. Puede usar el template `.env.example` corriendo `cp
+.env.example .env` aunque se desalienta el uso de estas variables en producción.
 
 ## Usando la aplicación
 

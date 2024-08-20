@@ -58,25 +58,30 @@ Simplemente utilizando `git clone https://github.com/lpinilla/Meli-Challenge.git
 
 ## Levantando servicios
 
+Antes de levantar los servicios, es importante crear el archivo `.env` con las variables de entorno antes de correr la aplicación. Puede usar el template `.env.example` corriendo `cp .env.example .env` aunque se desalienta el uso de estas variables en producción.
+
 Accediendo a la carpeta raíz del repositorio, puede ejecutar `docker compose up` para levantar los servicios. Este comando descargará las imágenes de
 `postgres` y `mailhog` mientras que creará y levantará la imágen principal de la API.
 
-Es importante crear el archivo `.env` con las variables de entorno antes de correr la aplicación. Puede usar el template `.env.example` corriendo `cp
-.env.example .env` aunque se desalienta el uso de estas variables en producción.
-
 ## Usando la aplicación
 
-Para utilizar la aplicación, es importante primero cargar el archivo csv de empleados y luego el archivo de json con la información de las bases de datos. En caso de realizarlo al revéz, el sistema rechazará el request.
+Para utilizar la aplicación, es importante primero cargar el archivo `csv` de empleados y luego el archivo de `json` con la información de las bases de datos. En caso de realizarlo al revéz, el sistema rechazará el request.
 
 Para cargar el archivo de empleados, puede utilizar el archivo de prueba `employee_data.csv`:
 
-Sitúese en la carpeta raíz del proyecto y corra `curl -X POST localhost:8080/employees/upload -F "file=@./employee_data.csv"` para cargar los empleados
+Sitúese en la carpeta raíz del proyecto y corra el siguiente comando para cargar los empleados:
 
-Luego, puede correr `curl -X POST localhost:8080/db_info/upload -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@./dbs_data.json"` para importar la información de las base de datos.
+`curl -X POST localhost:8080/employees/upload -F "file=@./employee_data.csv"`
+
+Luego, puede correr el siguiente comando para levantar la información de las bases de datos:
+
+`curl -X POST localhost:8080/db_info/upload -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@./dbs_data.json"`
 
 Ambos endpoint indicarán el resultado obtenido del request.
 
-Si quiere ver todas las bases de datos que no tienen clasificación, puede ejecutar `curl localhost:8080/db_info/unclassified`.
+Si quiere ver todas las bases de datos que no tienen clasificación, puede ejecutar:
+
+`curl localhost:8080/db_info/unclassified`.
 
 Por último, para ejecutar las notificaciones, puede correr `curl -X POST localhost:8080/notify`.
 
@@ -84,4 +89,4 @@ El archivo `curl_test_commands.sh` incluye todos los comandos anteriores para re
 
 Puede ver los mails "enviados" accediendo al portal web de mailhog: `http://localhost:8025`
 
-La documentación de los endpoints se puede ver en `localhost:8080/docs`.
+La documentación de los endpoints se puede ver en `http://localhost:8080/docs`.

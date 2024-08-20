@@ -38,7 +38,7 @@ En caso de que no se cumplan los requisitos, la entrada no será añadida a la b
 
 ## Arquitectura candidata
 
-![](draft_diagrama_solucion.png)
+![](diagrama_solucion.png)
 
 ## Esquema de DB
 

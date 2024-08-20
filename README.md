@@ -67,7 +67,7 @@ Accediendo a la carpeta raíz del repositorio, puede ejecutar `docker compose up
 
 Para utilizar la aplicación, es importante primero cargar el archivo `csv` de empleados y luego el archivo de `json` con la información de las bases de datos. En caso de realizarlo al revéz, el sistema rechazará el request.
 
-Para cargar el archivo de empleados, puede utilizar el archivo de prueba `employee_data.csv`:
+Para probar el sistema, puede probar los archivos `employee_data.csv` y `db_info.json`.
 
 Sitúese en la carpeta raíz del proyecto y corra el siguiente comando para cargar los empleados:
 
